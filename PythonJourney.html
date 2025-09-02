@@ -3,485 +3,177 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Python Journey - Master Python Step by Step</title>
+    <title>Python Journey - Learn Python from Beginner to Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; }
-        .lesson-item:hover { background-color: #f8fafc; }
-        .lesson-completed { background-color: #dcfce7; border-color: #16a34a; }
-        .lesson-current { background-color: #dbeafe; border-color: #2563eb; }
-        .code-block { background: #1e293b; color: #e2e8f0; }
-        .output-block { background: #0f172a; color: #10b981; }
-        .difficulty-badge { font-size: 0.75rem; }
-        .sidebar { min-height: calc(100vh - 4rem); }
-        .content-area { min-height: calc(100vh - 4rem); }
-        .streak-flame { animation: flicker 2s infinite alternate; }
-        @keyframes flicker {
-            0% { transform: scale(1) rotate(-1deg); }
-            100% { transform: scale(1.1) rotate(1deg); }
+        .code-editor {
+            font-family: 'Courier New', monospace;
+            background: #1e1e1e;
+            color: #d4d4d4;
         }
-        .progress-ring {
-            transform: rotate(-90deg);
+        .syntax-keyword { color: #569cd6; }
+        .syntax-string { color: #ce9178; }
+        .syntax-comment { color: #6a9955; }
+        .syntax-number { color: #b5cea8; }
+        
+        .lesson-card:hover {
+            transform: translateY(-2px);
+            transition: all 0.3s ease;
         }
-        .progress-ring-circle {
-            transition: stroke-dashoffset 0.35s;
-            transform-origin: 50% 50%;
+        
+        .progress-bar {
+            transition: width 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
         }
     </style>
 </head>
-<body class="bg-gray-50">
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
     <!-- Header -->
-    <header class="bg-white shadow-sm border-b sticky top-0 z-40">
-        <div class="max-w-7xl mx-auto px-4 py-3">
+    <header class="bg-white shadow-lg">
+        <div class="container mx-auto px-6 py-4">
             <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-3">
-                    <div class="text-2xl">🐍</div>
-                    <h1 class="text-xl font-bold text-gray-800">Python Journey</h1>
-                    <span class="text-sm text-gray-500 hidden md:block">Master Python Step by Step</span>
+                    <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold text-xl">🐍</span>
+                    </div>
+                    <h1 class="text-2xl font-bold text-gray-800">Python Journey</h1>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <div class="flex items-center space-x-2 bg-orange-100 px-3 py-1 rounded-full cursor-pointer" onclick="showStreakDetails()">
-                        <span class="text-lg streak-flame">🔥</span>
-                        <span class="text-sm font-medium text-orange-800" id="streakCounter">7 day streak</span>
+                    <div class="text-sm text-gray-600">
+                        Progress: <span id="overall-progress">0</span>/15 lessons
                     </div>
-                    <div class="flex items-center space-x-2 bg-blue-100 px-3 py-1 rounded-full">
-                        <span class="text-lg">⭐</span>
-                        <span class="text-sm font-medium text-blue-800" id="xpCounter">1,250 XP</span>
+                    <div class="w-32 h-2 bg-gray-200 rounded-full">
+                        <div id="progress-bar" class="h-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full progress-bar" style="width: 0%"></div>
                     </div>
-                    <button onclick="showStats()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
-                        📊 Stats
-                    </button>
-                    <button onclick="showSettings()" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
-                        ⚙️
-                    </button>
                 </div>
             </div>
         </div>
     </header>
 
-    <div class="flex max-w-7xl mx-auto">
-        <!-- Sidebar -->
-        <div class="sidebar w-80 bg-white shadow-sm border-r overflow-y-auto">
-            <div class="p-4">
-                <!-- Progress Overview -->
-                <div class="bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg p-4 mb-6 text-white">
-                    <div class="flex items-center justify-between mb-2">
-                        <h3 class="font-semibold">Your Progress</h3>
-                        <div class="relative w-12 h-12">
-                            <svg class="progress-ring w-12 h-12" viewBox="0 0 36 36">
-                                <path class="progress-ring-circle" stroke="rgba(255,255,255,0.3)" stroke-width="3" fill="transparent" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"></path>
-                                <path class="progress-ring-circle" stroke="white" stroke-width="3" fill="transparent" stroke-dasharray="25, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"></path>
-                            </svg>
-                            <div class="absolute inset-0 flex items-center justify-center text-xs font-bold">25%</div>
-                        </div>
-                    </div>
-                    <div class="text-sm opacity-90">8 of 32 lessons completed</div>
-                </div>
-
-                <h2 class="text-lg font-semibold text-gray-800 mb-4">Python Lessons</h2>
-                
-                <!-- Beginner Level -->
-                <div class="mb-6">
-                    <div class="flex items-center space-x-2 mb-3">
-                        <span class="difficulty-badge bg-green-100 text-green-800 px-2 py-1 rounded-full font-medium">BEGINNER</span>
-                        <span class="text-sm text-gray-500">Start here</span>
-                        <div class="flex-1 bg-gray-200 rounded-full h-1.5">
-                            <div class="bg-green-500 h-1.5 rounded-full" style="width: 70%"></div>
-                        </div>
-                    </div>
-                    <div class="space-y-1" id="beginnerLessons">
-                        <!-- Lessons will be populated by JavaScript -->
-                    </div>
-                </div>
-
-                <!-- Intermediate Level -->
-                <div class="mb-6">
-                    <div class="flex items-center space-x-2 mb-3">
-                        <span class="difficulty-badge bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full font-medium">INTERMEDIATE</span>
-                        <span class="text-sm text-gray-500">Build skills</span>
-                        <div class="flex-1 bg-gray-200 rounded-full h-1.5">
-                            <div class="bg-yellow-500 h-1.5 rounded-full" style="width: 20%"></div>
-                        </div>
-                    </div>
-                    <div class="space-y-1" id="intermediateLessons">
-                        <!-- Lessons will be populated by JavaScript -->
-                    </div>
-                </div>
-
-                <!-- Advanced Level -->
-                <div class="mb-6">
-                    <div class="flex items-center space-x-2 mb-3">
-                        <span class="difficulty-badge bg-red-100 text-red-800 px-2 py-1 rounded-full font-medium">ADVANCED</span>
-                        <span class="text-sm text-gray-500">Master Python</span>
-                        <div class="flex-1 bg-gray-200 rounded-full h-1.5">
-                            <div class="bg-red-500 h-1.5 rounded-full" style="width: 0%"></div>
-                        </div>
-                    </div>
-                    <div class="space-y-1" id="advancedLessons">
-                        <!-- Lessons will be populated by JavaScript -->
-                    </div>
-                </div>
-
-                <!-- Projects -->
-                <div class="mb-6">
-                    <div class="flex items-center space-x-2 mb-3">
-                        <span class="difficulty-badge bg-purple-100 text-purple-800 px-2 py-1 rounded-full font-medium">PROJECTS</span>
-                        <span class="text-sm text-gray-500">Apply skills</span>
-                        <div class="flex-1 bg-gray-200 rounded-full h-1.5">
-                            <div class="bg-purple-500 h-1.5 rounded-full" style="width: 0%"></div>
-                        </div>
-                    </div>
-                    <div class="space-y-1" id="projectLessons">
-                        <!-- Projects will be populated by JavaScript -->
+    <div class="container mx-auto px-6 py-8">
+        <!-- Main Navigation -->
+        <div class="flex flex-col lg:flex-row gap-8">
+            <!-- Sidebar -->
+            <div class="lg:w-1/4">
+                <div class="bg-white rounded-xl shadow-lg p-6 sticky top-8">
+                    <h2 class="text-xl font-bold text-gray-800 mb-4">Learning Path</h2>
+                    <div class="space-y-2" id="lesson-nav">
+                        <!-- Navigation will be populated by JavaScript -->
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Main Content -->
-        <div class="content-area flex-1 p-6">
-            <div id="lessonContent">
-                <!-- Default welcome content -->
-                <div class="max-w-4xl">
-                    <div class="bg-gradient-to-r from-blue-600 to-purple-700 rounded-xl p-8 text-white mb-8">
-                        <h1 class="text-4xl font-bold mb-4">Welcome to Python Journey! 🐍</h1>
-                        <p class="text-xl mb-6">Master Python programming through interactive lessons, quizzes, and hands-on projects.</p>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div class="bg-white bg-opacity-20 rounded-lg p-4">
-                                <div class="text-2xl mb-2">📚</div>
-                                <div class="font-semibold">32 Lessons</div>
-                                <div class="text-sm opacity-90">From basics to advanced</div>
-                            </div>
-                            <div class="bg-white bg-opacity-20 rounded-lg p-4">
-                                <div class="text-2xl mb-2">🧠</div>
-                                <div class="font-semibold">Interactive Quizzes</div>
-                                <div class="text-sm opacity-90">Test your knowledge</div>
-                            </div>
-                            <div class="bg-white bg-opacity-20 rounded-lg p-4">
-                                <div class="text-2xl mb-2">🏆</div>
-                                <div class="font-semibold">Track Progress</div>
-                                <div class="text-sm opacity-90">Streaks & achievements</div>
+            <!-- Main Content -->
+            <div class="lg:w-3/4">
+                <!-- Welcome Screen -->
+                <div id="welcome-screen" class="bg-white rounded-xl shadow-lg p-8 fade-in">
+                    <div class="text-center mb-8">
+                        <h2 class="text-4xl font-bold text-gray-800 mb-4">Welcome to Python Journey!</h2>
+                        <p class="text-xl text-gray-600 mb-6">Master Python programming from beginner to professional level</p>
+                        <div class="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-6 rounded-lg mb-8">
+                            <h3 class="text-2xl font-bold mb-2">🚀 What You'll Learn</h3>
+                            <div class="grid md:grid-cols-3 gap-4 text-left">
+                                <div>
+                                    <h4 class="font-semibold">Beginner (1-5)</h4>
+                                    <ul class="text-sm mt-2 space-y-1">
+                                        <li>• Python Basics</li>
+                                        <li>• Variables & Data Types</li>
+                                        <li>• Control Structures</li>
+                                        <li>• Functions</li>
+                                        <li>• Data Structures</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold">Intermediate (6-10)</h4>
+                                    <ul class="text-sm mt-2 space-y-1">
+                                        <li>• File Handling</li>
+                                        <li>• Error Handling</li>
+                                        <li>• OOP Concepts</li>
+                                        <li>• Modules & Packages</li>
+                                        <li>• Regular Expressions</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold">Advanced (11-15)</h4>
+                                    <ul class="text-sm mt-2 space-y-1">
+                                        <li>• Decorators</li>
+                                        <li>• Generators</li>
+                                        <li>• Context Managers</li>
+                                        <li>• Async Programming</li>
+                                        <li>• Testing & Debugging</li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
-                        <button onclick="loadLesson('intro')" class="mt-6 bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
-                            Start Learning →
+                        <button onclick="startLearning()" class="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-8 py-3 rounded-lg font-semibold hover:from-blue-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-105">
+                            Start Your Python Journey
                         </button>
                     </div>
-
-                    <!-- Daily Challenge -->
-                    <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <h2 class="text-xl font-semibold text-gray-800">🎯 Daily Challenge</h2>
-                            <span class="text-sm text-gray-500">Expires in 14h 32m</span>
-                        </div>
-                        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                            <h3 class="font-medium text-yellow-800 mb-2">List Comprehension Challenge</h3>
-                            <p class="text-yellow-700 text-sm mb-3">Create a list comprehension that generates squares of even numbers from 1 to 20.</p>
-                            <div class="flex items-center space-x-3">
-                                <button onclick="startDailyChallenge()" class="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded text-sm font-medium">
-                                    Start Challenge
-                                </button>
-                                <span class="text-yellow-600 text-sm">+50 XP reward</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Recent Activity -->
-                    <div class="bg-white rounded-lg shadow-sm p-6">
-                        <h2 class="text-xl font-semibold text-gray-800 mb-4">📈 Recent Activity</h2>
-                        <div class="space-y-3">
-                            <div class="flex items-center space-x-3 p-3 bg-green-50 rounded-lg">
-                                <div class="text-green-600">✅</div>
-                                <div class="flex-1">
-                                    <div class="font-medium text-gray-800">Completed "Python Functions"</div>
-                                    <div class="text-sm text-gray-600">2 hours ago • +75 XP</div>
-                                </div>
-                            </div>
-                            <div class="flex items-center space-x-3 p-3 bg-blue-50 rounded-lg">
-                                <div class="text-blue-600">🧠</div>
-                                <div class="flex-1">
-                                    <div class="font-medium text-gray-800">Aced quiz on "Data Types"</div>
-                                    <div class="text-sm text-gray-600">Yesterday • +25 XP</div>
-                                </div>
-                            </div>
-                            <div class="flex items-center space-x-3 p-3 bg-orange-50 rounded-lg">
-                                <div class="text-orange-600">🔥</div>
-                                <div class="flex-1">
-                                    <div class="font-medium text-gray-800">7-day learning streak!</div>
-                                    <div class="text-sm text-gray-600">Today • Keep it up!</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Stats Modal -->
-    <div id="statsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-        <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-            <div class="p-6 border-b">
-                <div class="flex items-center justify-between">
-                    <h2 class="text-2xl font-bold text-gray-800">📊 Your Learning Statistics</h2>
-                    <button onclick="closeStats()" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
-                </div>
-            </div>
-            <div class="p-6">
-                <!-- Overview Stats -->
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
-                    <div class="text-center">
-                        <div class="text-3xl mb-2">🎯</div>
-                        <div class="text-2xl font-bold text-blue-600">25%</div>
-                        <div class="text-gray-600">Overall Progress</div>
-                    </div>
-                    <div class="text-center">
-                        <div class="text-3xl mb-2">📚</div>
-                        <div class="text-2xl font-bold text-green-600">8/32</div>
-                        <div class="text-gray-600">Lessons Completed</div>
-                    </div>
-                    <div class="text-center">
-                        <div class="text-3xl mb-2">🔥</div>
-                        <div class="text-2xl font-bold text-orange-600">7</div>
-                        <div class="text-gray-600">Day Streak</div>
-                    </div>
-                    <div class="text-center">
-                        <div class="text-3xl mb-2">⭐</div>
-                        <div class="text-2xl font-bold text-purple-600">1,250</div>
-                        <div class="text-gray-600">Total XP</div>
-                    </div>
                 </div>
 
-                <!-- Progress by Level -->
-                <div class="mb-8">
-                    <h3 class="text-lg font-semibold mb-4">Progress by Level</h3>
-                    <div class="space-y-4">
-                        <div>
-                            <div class="flex justify-between text-sm mb-1">
-                                <span class="text-green-600 font-medium">Beginner</span>
-                                <span>7/10 completed (70%)</span>
-                            </div>
-                            <div class="w-full bg-gray-200 rounded-full h-3">
-                                <div class="bg-green-500 h-3 rounded-full" style="width: 70%"></div>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="flex justify-between text-sm mb-1">
-                                <span class="text-yellow-600 font-medium">Intermediate</span>
-                                <span>1/10 completed (10%)</span>
-                            </div>
-                            <div class="w-full bg-gray-200 rounded-full h-3">
-                                <div class="bg-yellow-500 h-3 rounded-full" style="width: 10%"></div>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="flex justify-between text-sm mb-1">
-                                <span class="text-red-600 font-medium">Advanced</span>
-                                <span>0/8 completed (0%)</span>
-                            </div>
-                            <div class="w-full bg-gray-200 rounded-full h-3">
-                                <div class="bg-red-500 h-3 rounded-full" style="width: 0%"></div>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="flex justify-between text-sm mb-1">
-                                <span class="text-purple-600 font-medium">Projects</span>
-                                <span>0/4 completed (0%)</span>
-                            </div>
-                            <div class="w-full bg-gray-200 rounded-full h-3">
-                                <div class="bg-purple-500 h-3 rounded-full" style="width: 0%"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Learning Streak -->
-                <div class="mb-8">
-                    <h3 class="text-lg font-semibold mb-4">🔥 Learning Streak</h3>
-                    <div class="bg-orange-50 rounded-lg p-4">
-                        <div class="flex items-center justify-between mb-4">
+                <!-- Lesson Content -->
+                <div id="lesson-content" class="hidden">
+                    <div class="bg-white rounded-xl shadow-lg p-8 fade-in">
+                        <div class="flex items-center justify-between mb-6">
                             <div>
-                                <div class="text-2xl font-bold text-orange-600">7 Days</div>
-                                <div class="text-orange-700">Current Streak</div>
+                                <h2 id="lesson-title" class="text-3xl font-bold text-gray-800"></h2>
+                                <p id="lesson-difficulty" class="text-sm text-gray-500 mt-1"></p>
                             </div>
-                            <div>
-                                <div class="text-lg font-semibold text-gray-700">21 Days</div>
-                                <div class="text-gray-600">Longest Streak</div>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-7 gap-2">
-                            <div class="text-center">
-                                <div class="text-xs text-gray-500 mb-1">Mon</div>
-                                <div class="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-white text-xs">✓</div>
-                            </div>
-                            <div class="text-center">
-                                <div class="text-xs text-gray-500 mb-1">Tue</div>
-                                <div class="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-white text-xs">✓</div>
-                            </div>
-                            <div class="text-center">
-                                <div class="text-xs text-gray-500 mb-1">Wed</div>
-                                <div class="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-white text-xs">✓</div>
-                            </div>
-                            <div class="text-center">
-                                <div class="text-xs text-gray-500 mb-1">Thu</div>
-                                <div class="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-white text-xs">✓</div>
-                            </div>
-                            <div class="text-center">
-                                <div class="text-xs text-gray-500 mb-1">Fri</div>
-                                <div class="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-white text-xs">✓</div>
-                            </div>
-                            <div class="text-center">
-                                <div class="text-xs text-gray-500 mb-1">Sat</div>
-                                <div class="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-white text-xs">✓</div>
-                            </div>
-                            <div class="text-center">
-                                <div class="text-xs text-gray-500 mb-1">Sun</div>
-                                <div class="w-8 h-8 bg-orange-600 rounded-full flex items-center justify-center text-white text-xs font-bold">🔥</div>
+                            <div class="flex space-x-2">
+                                <button id="prev-btn" onclick="previousLesson()" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">← Previous</button>
+                                <button id="next-btn" onclick="nextLesson()" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">Next →</button>
                             </div>
                         </div>
-                    </div>
-                </div>
 
-                <!-- Achievements -->
-                <div>
-                    <h3 class="text-lg font-semibold mb-4">🏆 Achievements</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                            <div class="flex items-center space-x-3">
-                                <div class="text-2xl">🥇</div>
+                        <div id="lesson-body" class="prose max-w-none">
+                            <!-- Lesson content will be populated here -->
+                        </div>
+
+                        <!-- Quiz Section -->
+                        <div id="quiz-section" class="mt-8 p-6 bg-yellow-50 rounded-lg border-l-4 border-yellow-400">
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">📝 Quick Quiz</h3>
+                            <div id="quiz-content">
+                                <!-- Quiz questions will be populated here -->
+                            </div>
+                            <button id="check-quiz" onclick="checkQuiz()" class="mt-4 px-6 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors">Check Answers</button>
+                            <div id="quiz-result" class="mt-4 hidden"></div>
+                        </div>
+
+                        <!-- Exercise Section -->
+                        <div id="exercise-section" class="mt-8 p-6 bg-green-50 rounded-lg border-l-4 border-green-400">
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">💻 Coding Exercise</h3>
+                            <div id="exercise-description" class="mb-4">
+                                <!-- Exercise description will be populated here -->
+                            </div>
+                            <div class="grid md:grid-cols-2 gap-4">
                                 <div>
-                                    <div class="font-semibold text-yellow-800">First Steps</div>
-                                    <div class="text-sm text-yellow-700">Complete your first lesson</div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Your Code:</label>
+                                    <textarea id="code-editor" class="w-full h-40 p-4 code-editor rounded-lg resize-none" placeholder="# Write your Python code here..."></textarea>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Output:</label>
+                                    <div id="code-output" class="w-full h-40 p-4 bg-gray-900 text-green-400 rounded-lg font-mono text-sm overflow-auto">Ready to run your code...</div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="bg-orange-50 border border-orange-200 rounded-lg p-4">
-                            <div class="flex items-center space-x-3">
-                                <div class="text-2xl">🔥</div>
-                                <div>
-                                    <div class="font-semibold text-orange-800">Week Warrior</div>
-                                    <div class="text-sm text-orange-700">7-day learning streak</div>
-                                </div>
+                            <div class="flex space-x-2 mt-4">
+                                <button onclick="runCode()" class="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors">▶ Run Code</button>
+                                <button onclick="checkExercise()" class="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">✓ Check Solution</button>
+                                <button onclick="showHint()" class="px-6 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors">💡 Hint</button>
+                            </div>
+                            <div id="exercise-result" class="mt-4 hidden"></div>
+                            <div id="hint-box" class="mt-4 p-4 bg-purple-100 rounded-lg hidden">
+                                <h4 class="font-semibold text-purple-800">💡 Hint:</h4>
+                                <p id="hint-text" class="text-purple-700 mt-2"></p>
                             </div>
                         </div>
-                        <div class="bg-green-50 border border-green-200 rounded-lg p-4">
-                            <div class="flex items-center space-x-3">
-                                <div class="text-2xl">📚</div>
-                                <div>
-                                    <div class="font-semibold text-green-800">Knowledge Seeker</div>
-                                    <div class="text-sm text-green-700">Complete 5 lessons</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="bg-gray-100 border border-gray-200 rounded-lg p-4 opacity-50">
-                            <div class="flex items-center space-x-3">
-                                <div class="text-2xl">🎯</div>
-                                <div>
-                                    <div class="font-semibold text-gray-600">Quiz Master</div>
-                                    <div class="text-sm text-gray-500">Score 100% on 10 quizzes</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Streak Details Modal -->
-    <div id="streakModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4">
-            <div class="p-6 border-b">
-                <div class="flex items-center justify-between">
-                    <h2 class="text-xl font-bold text-gray-800">🔥 Learning Streak</h2>
-                    <button onclick="closeStreakDetails()" class="text-gray-500 hover:text-gray-700 text-xl">&times;</button>
-                </div>
-            </div>
-            <div class="p-6">
-                <div class="text-center mb-6">
-                    <div class="text-6xl mb-4 streak-flame">🔥</div>
-                    <div class="text-3xl font-bold text-orange-600 mb-2">7 Days</div>
-                    <div class="text-gray-600">Keep learning to maintain your streak!</div>
-                </div>
-                
-                <div class="bg-orange-50 rounded-lg p-4 mb-4">
-                    <div class="text-center">
-                        <div class="text-sm text-orange-700 mb-2">Next milestone</div>
-                        <div class="text-lg font-semibold text-orange-800">10 Day Streak 🏆</div>
-                        <div class="text-sm text-orange-600">3 more days to go!</div>
-                    </div>
-                </div>
-
-                <div class="space-y-3">
-                    <div class="flex justify-between items-center">
-                        <span class="text-gray-600">Current Streak</span>
-                        <span class="font-semibold">7 days</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-gray-600">Longest Streak</span>
-                        <span class="font-semibold">21 days</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-gray-600">Total Learning Days</span>
-                        <span class="font-semibold">45 days</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Settings Modal -->
-    <div id="settingsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4">
-            <div class="p-6 border-b">
-                <div class="flex items-center justify-between">
-                    <h2 class="text-xl font-bold text-gray-800">⚙️ Settings</h2>
-                    <button onclick="closeSettings()" class="text-gray-500 hover:text-gray-700 text-xl">&times;</button>
-                </div>
-            </div>
-            <div class="p-6">
-                <div class="space-y-6">
-                    <div>
-                        <h3 class="font-semibold text-gray-800 mb-3">Notifications</h3>
-                        <div class="space-y-3">
-                            <label class="flex items-center">
-                                <input type="checkbox" checked class="rounded text-blue-600">
-                                <span class="ml-2 text-gray-700">Daily reminder</span>
-                            </label>
-                            <label class="flex items-center">
-                                <input type="checkbox" checked class="rounded text-blue-600">
-                                <span class="ml-2 text-gray-700">Streak notifications</span>
-                            </label>
-                            <label class="flex items-center">
-                                <input type="checkbox" class="rounded text-blue-600">
-                                <span class="ml-2 text-gray-700">Achievement alerts</span>
-                            </label>
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <h3 class="font-semibold text-gray-800 mb-3">Learning Goals</h3>
-                        <select class="w-full p-2 border rounded-lg">
-                            <option>1 lesson per day</option>
-                            <option selected>2 lessons per day</option>
-                            <option>3 lessons per day</option>
-                            <option>Custom</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <h3 class="font-semibold text-gray-800 mb-3">Theme</h3>
-                        <div class="grid grid-cols-2 gap-2">
-                            <button class="p-2 border rounded-lg bg-blue-50 border-blue-200 text-blue-800">Light</button>
-                            <button class="p-2 border rounded-lg hover:bg-gray-50">Dark</button>
-                        </div>
-                    </div>
-
-                    <div class="pt-4 border-t">
-                        <button onclick="resetProgress()" class="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg font-medium">
-                            Reset All Progress
-                        </button>
                     </div>
                 </div>
             </div>
@@ -489,502 +181,918 @@
     </div>
 
     <script>
-        // Learning data structure
-        const learningData = {
-            currentStreak: 7,
-            longestStreak: 21,
-            totalXP: 1250,
-            completedLessons: new Set(['intro', 'syntax', 'variables', 'datatypes', 'strings', 'operators', 'input', 'lists']),
-            lastLearningDate: new Date().toDateString(),
-            achievements: ['first_steps', 'week_warrior', 'knowledge_seeker']
-        };
-
-        // Lesson structure
-        const lessons = {
-            beginner: [
-                { id: 'intro', title: 'Python Introduction', description: 'What is Python?', xp: 50 },
-                { id: 'syntax', title: 'Python Syntax', description: 'Basic syntax rules', xp: 75 },
-                { id: 'variables', title: 'Variables', description: 'Creating and using variables', xp: 75 },
-                { id: 'datatypes', title: 'Data Types', description: 'Numbers, strings, booleans', xp: 100 },
-                { id: 'strings', title: 'Strings', description: 'Working with text', xp: 100 },
-                { id: 'operators', title: 'Operators', description: 'Arithmetic, comparison, logical', xp: 75 },
-                { id: 'input', title: 'User Input', description: 'Getting input from users', xp: 50 },
-                { id: 'conditions', title: 'If...Else', description: 'Conditional statements', xp: 100 },
-                { id: 'loops', title: 'Loops', description: 'For and while loops', xp: 125 },
-                { id: 'functions', title: 'Functions', description: 'Reusable code blocks', xp: 150 }
-            ],
-            intermediate: [
-                { id: 'lists', title: 'Lists', description: 'Ordered collections', xp: 100 },
-                { id: 'tuples', title: 'Tuples', description: 'Immutable sequences', xp: 75 },
-                { id: 'sets', title: 'Sets', description: 'Unique collections', xp: 75 },
-                { id: 'dictionaries', title: 'Dictionaries', description: 'Key-value pairs', xp: 125 },
-                { id: 'comprehensions', title: 'Comprehensions', description: 'List, dict, set comprehensions', xp: 150 },
-                { id: 'modules', title: 'Modules', description: 'Importing and using modules', xp: 100 },
-                { id: 'files', title: 'File Handling', description: 'Reading and writing files', xp: 125 },
-                { id: 'errors', title: 'Error Handling', description: 'Try, except, finally', xp: 100 },
-                { id: 'decorators', title: 'Decorators', description: 'Function modification', xp: 175 },
-                { id: 'generators', title: 'Generators', description: 'Memory-efficient iteration', xp: 150 }
-            ],
-            advanced: [
-                { id: 'classes', title: 'Classes/Objects', description: 'Object-oriented programming', xp: 200 },
-                { id: 'inheritance', title: 'Inheritance', description: 'Class inheritance', xp: 175 },
-                { id: 'metaclasses', title: 'Metaclasses', description: 'Classes that create classes', xp: 250 },
-                { id: 'async', title: 'Async Programming', description: 'Asynchronous code', xp: 225 },
-                { id: 'context', title: 'Context Managers', description: 'With statements', xp: 150 },
-                { id: 'regex', title: 'Regular Expressions', description: 'Pattern matching', xp: 175 },
-                { id: 'testing', title: 'Unit Testing', description: 'Testing your code', xp: 200 },
-                { id: 'performance', title: 'Performance', description: 'Optimizing Python code', xp: 225 }
-            ],
-            projects: [
-                { id: 'calculator', title: 'Calculator App', description: 'Build a GUI calculator', xp: 300 },
-                { id: 'todo', title: 'Todo List', description: 'Task management app', xp: 350 },
-                { id: 'weather', title: 'Weather App', description: 'API integration project', xp: 400 },
-                { id: 'game', title: 'Snake Game', description: 'Classic arcade game', xp: 500 }
-            ]
-        };
-
-        // Sample lesson content
-        const lessonContent = {
-            intro: {
-                title: "Python Introduction",
+        // Lesson data structure
+        const lessons = [
+            {
+                id: 1,
+                title: "Python Basics & Setup",
+                difficulty: "Beginner",
                 content: `
-                    <div class="max-w-4xl">
-                        <div class="mb-6">
-                            <h1 class="text-3xl font-bold text-gray-800 mb-2">Python Introduction</h1>
-                            <div class="flex items-center space-x-4 text-sm text-gray-600">
-                                <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full font-medium">BEGINNER</span>
-                                <span>⏱️ 5 min read</span>
-                                <span>⭐ 50 XP</span>
-                            </div>
-                        </div>
-
-                        <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
-                            <h2 class="text-xl font-semibold mb-4">What is Python?</h2>
-                            <p class="text-gray-700 mb-4">
-                                Python is a popular programming language created by Guido van Rossum and released in 1991. 
-                                It's known for its simple, readable syntax that makes it perfect for beginners.
-                            </p>
-                            <p class="text-gray-700 mb-4">Python is used for:</p>
-                            <ul class="list-disc list-inside text-gray-700 mb-4 space-y-1">
-                                <li>Web development (Django, Flask)</li>
-                                <li>Data science and machine learning</li>
-                                <li>Automation and scripting</li>
-                                <li>Desktop applications</li>
-                                <li>Game development</li>
-                            </ul>
-                        </div>
-
-                        <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
-                            <h2 class="text-xl font-semibold mb-4">Your First Python Program</h2>
-                            <p class="text-gray-700 mb-4">Let's start with the classic "Hello, World!" program:</p>
-                            <div class="code-block p-4 rounded-lg mb-4">
-                                <pre><code>print("Hello, World!")</code></pre>
-                            </div>
-                            <p class="text-sm text-gray-600 mb-4">Output:</p>
-                            <div class="output-block p-4 rounded-lg">
-                                <pre><code>Hello, World!</code></pre>
-                            </div>
-                        </div>
-
-                        <div class="bg-blue-50 rounded-lg p-6 mb-6">
-                            <h2 class="text-xl font-semibold text-blue-800 mb-4">🧠 Quick Quiz</h2>
-                            <div id="quiz-intro">
-                                <p class="text-gray-700 mb-4">What year was Python first released?</p>
-                                <div class="space-y-2">
-                                    <button onclick="checkQuiz('intro', 'a')" class="quiz-btn block w-full text-left p-3 bg-white rounded border hover:bg-gray-50">A) 1989</button>
-                                    <button onclick="checkQuiz('intro', 'b')" class="quiz-btn block w-full text-left p-3 bg-white rounded border hover:bg-gray-50">B) 1991</button>
-                                    <button onclick="checkQuiz('intro', 'c')" class="quiz-btn block w-full text-left p-3 bg-white rounded border hover:bg-gray-50">C) 1995</button>
-                                    <button onclick="checkQuiz('intro', 'd')" class="quiz-btn block w-full text-left p-3 bg-white rounded border hover:bg-gray-50">D) 2000</button>
-                                </div>
-                                <div id="quiz-intro-result" class="mt-4 hidden"></div>
-                            </div>
-                        </div>
-
-                        <div class="flex justify-between items-center">
-                            <button class="bg-gray-300 text-gray-500 px-6 py-2 rounded font-medium cursor-not-allowed">
-                                ← Previous
-                            </button>
-                            <button onclick="completeLesson('intro'); loadLesson('syntax')" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded font-medium">
-                                Complete & Continue →
-                            </button>
-                        </div>
+                    <h3 class="text-2xl font-bold mb-4">Welcome to Python! 🐍</h3>
+                    <p class="mb-4">Python is a powerful, easy-to-learn programming language. It's used for web development, data science, artificial intelligence, and much more!</p>
+                    
+                    <h4 class="text-xl font-semibold mb-3">Why Python?</h4>
+                    <ul class="list-disc pl-6 mb-4">
+                        <li>Easy to read and write</li>
+                        <li>Huge community and libraries</li>
+                        <li>Versatile - works for many applications</li>
+                        <li>Great for beginners</li>
+                    </ul>
+                    
+                    <h4 class="text-xl font-semibold mb-3">Your First Python Program</h4>
+                    <div class="bg-gray-900 text-white p-4 rounded-lg mb-4">
+                        <code class="text-green-400">print("Hello, World!")</code>
                     </div>
-                `
+                    
+                    <p class="mb-4">The <code class="bg-gray-200 px-2 py-1 rounded">print()</code> function displays text on the screen. This is traditionally the first program every programmer writes!</p>
+                `,
+                quiz: [
+                    {
+                        question: "What function is used to display text in Python?",
+                        options: ["display()", "print()", "show()", "output()"],
+                        correct: 1
+                    },
+                    {
+                        question: "Python is known for being:",
+                        options: ["Difficult to learn", "Easy to read", "Only for experts", "Slow"],
+                        correct: 1
+                    }
+                ],
+                exercise: {
+                    description: "Write a Python program that prints your name and your favorite programming language.",
+                    hint: "Use the print() function twice - once for your name and once for your favorite language.",
+                    solution: 'print("Your Name")\nprint("Python")',
+                    check: (code) => code.includes('print(') && code.split('print(').length >= 3
+                }
             },
-            syntax: {
-                title: "Python Syntax",
+            {
+                id: 2,
+                title: "Variables & Data Types",
+                difficulty: "Beginner",
                 content: `
-                    <div class="max-w-4xl">
-                        <div class="mb-6">
-                            <h1 class="text-3xl font-bold text-gray-800 mb-2">Python Syntax</h1>
-                            <div class="flex items-center space-x-4 text-sm text-gray-600">
-                                <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full font-medium">BEGINNER</span>
-                                <span>⏱️ 7 min read</span>
-                                <span>⭐ 75 XP</span>
-                            </div>
-                        </div>
-
-                        <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
-                            <h2 class="text-xl font-semibold mb-4">Python Indentation</h2>
-                            <p class="text-gray-700 mb-4">
-                                Unlike other programming languages that use braces {}, Python uses indentation to define code blocks.
-                                This makes Python code clean and readable.
-                            </p>
-                            <div class="code-block p-4 rounded-lg mb-4">
-                                <pre><code>if 5 > 2:
-    print("Five is greater than two!")
-    print("This is also indented")
-print("This is not indented")</code></pre>
-                            </div>
-                        </div>
-
-                        <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
-                            <h2 class="text-xl font-semibold mb-4">Comments</h2>
-                            <p class="text-gray-700 mb-4">Comments help explain your code and are ignored by Python:</p>
-                            <div class="code-block p-4 rounded-lg mb-4">
-                                <pre><code># This is a comment
-print("Hello, World!")  # This is also a comment
-
-"""
-This is a
-multi-line comment
-"""</code></pre>
-                            </div>
-                        </div>
-
-                        <div class="bg-blue-50 rounded-lg p-6 mb-6">
-                            <h2 class="text-xl font-semibold text-blue-800 mb-4">🧠 Quick Quiz</h2>
-                            <div id="quiz-syntax">
-                                <p class="text-gray-700 mb-4">What does Python use to define code blocks?</p>
-                                <div class="space-y-2">
-                                    <button onclick="checkQuiz('syntax', 'a')" class="quiz-btn block w-full text-left p-3 bg-white rounded border hover:bg-gray-50">A) Curly braces {}</button>
-                                    <button onclick="checkQuiz('syntax', 'b')" class="quiz-btn block w-full text-left p-3 bg-white rounded border hover:bg-gray-50">B) Indentation</button>
-                                    <button onclick="checkQuiz('syntax', 'c')" class="quiz-btn block w-full text-left p-3 bg-white rounded border hover:bg-gray-50">C) Parentheses ()</button>
-                                    <button onclick="checkQuiz('syntax', 'd')" class="quiz-btn block w-full text-left p-3 bg-white rounded border hover:bg-gray-50">D) Semicolons ;</button>
-                                </div>
-                                <div id="quiz-syntax-result" class="mt-4 hidden"></div>
-                            </div>
-                        </div>
-
-                        <div class="flex justify-between items-center">
-                            <button onclick="loadLesson('intro')" class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded font-medium">
-                                ← Previous: Introduction
-                            </button>
-                            <button onclick="completeLesson('syntax'); loadLesson('variables')" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded font-medium">
-                                Complete & Continue →
-                            </button>
-                        </div>
+                    <h3 class="text-2xl font-bold mb-4">Variables & Data Types 📊</h3>
+                    <p class="mb-4">Variables are containers that store data. Python has several built-in data types.</p>
+                    
+                    <h4 class="text-xl font-semibold mb-3">Creating Variables</h4>
+                    <div class="bg-gray-900 text-white p-4 rounded-lg mb-4">
+                        <code class="text-green-400">name = "Alice"<br>age = 25<br>height = 5.6<br>is_student = True</code>
                     </div>
-                `
+                    
+                    <h4 class="text-xl font-semibold mb-3">Data Types</h4>
+                    <ul class="list-disc pl-6 mb-4">
+                        <li><strong>String (str):</strong> Text data - "Hello"</li>
+                        <li><strong>Integer (int):</strong> Whole numbers - 42</li>
+                        <li><strong>Float:</strong> Decimal numbers - 3.14</li>
+                        <li><strong>Boolean (bool):</strong> True or False</li>
+                    </ul>
+                    
+                    <div class="bg-gray-900 text-white p-4 rounded-lg mb-4">
+                        <code class="text-green-400">print(type(name))  # &lt;class 'str'&gt;<br>print(type(age))   # &lt;class 'int'&gt;</code>
+                    </div>
+                `,
+                quiz: [
+                    {
+                        question: "Which data type represents whole numbers?",
+                        options: ["str", "float", "int", "bool"],
+                        correct: 2
+                    },
+                    {
+                        question: "What would be the data type of: 3.14?",
+                        options: ["int", "float", "str", "bool"],
+                        correct: 1
+                    }
+                ],
+                exercise: {
+                    description: "Create variables for your name (string), age (integer), and whether you like Python (boolean). Print all three variables.",
+                    hint: "Remember: strings use quotes, integers don't need quotes, and booleans are True or False.",
+                    solution: 'name = "Your Name"\nage = 20\nlikes_python = True\nprint(name)\nprint(age)\nprint(likes_python)',
+                    check: (code) => code.includes('=') && code.includes('print(') && (code.includes('True') || code.includes('False'))
+                }
+            },
+            {
+                id: 3,
+                title: "Input & String Operations",
+                difficulty: "Beginner",
+                content: `
+                    <h3 class="text-2xl font-bold mb-4">Input & String Operations 🔤</h3>
+                    <p class="mb-4">Learn how to get input from users and manipulate strings.</p>
+                    
+                    <h4 class="text-xl font-semibold mb-3">Getting User Input</h4>
+                    <div class="bg-gray-900 text-white p-4 rounded-lg mb-4">
+                        <code class="text-green-400">name = input("What's your name? ")<br>print("Hello, " + name + "!")</code>
+                    </div>
+                    
+                    <h4 class="text-xl font-semibold mb-3">String Operations</h4>
+                    <div class="bg-gray-900 text-white p-4 rounded-lg mb-4">
+                        <code class="text-green-400">text = "Python Programming"<br>print(text.upper())     # PYTHON PROGRAMMING<br>print(text.lower())     # python programming<br>print(len(text))        # 18<br>print(text[0])          # P</code>
+                    </div>
+                    
+                    <h4 class="text-xl font-semibold mb-3">String Formatting</h4>
+                    <div class="bg-gray-900 text-white p-4 rounded-lg mb-4">
+                        <code class="text-green-400">name = "Alice"<br>age = 25<br>print(f"My name is {name} and I'm {age} years old")</code>
+                    </div>
+                `,
+                quiz: [
+                    {
+                        question: "Which function gets input from the user?",
+                        options: ["get()", "input()", "read()", "scan()"],
+                        correct: 1
+                    },
+                    {
+                        question: "What does len() function return?",
+                        options: ["First character", "Last character", "Length of string", "Type of string"],
+                        correct: 2
+                    }
+                ],
+                exercise: {
+                    description: "Create a program that asks for the user's first and last name, then prints a greeting using f-string formatting.",
+                    hint: "Use input() twice and f-strings with curly braces {}.",
+                    solution: 'first_name = input("First name: ")\nlast_name = input("Last name: ")\nprint(f"Hello, {first_name} {last_name}!")',
+                    check: (code) => code.includes('input(') && code.includes('f"') && code.includes('{') && code.includes('}')
+                }
+            },
+            {
+                id: 4,
+                title: "Conditional Statements",
+                difficulty: "Beginner",
+                content: `
+                    <h3 class="text-2xl font-bold mb-4">Conditional Statements 🤔</h3>
+                    <p class="mb-4">Make decisions in your code using if, elif, and else statements.</p>
+                    
+                    <h4 class="text-xl font-semibold mb-3">Basic If Statement</h4>
+                    <div class="bg-gray-900 text-white p-4 rounded-lg mb-4">
+                        <code class="text-green-400">age = 18<br>if age >= 18:<br>&nbsp;&nbsp;&nbsp;&nbsp;print("You can vote!")<br>else:<br>&nbsp;&nbsp;&nbsp;&nbsp;print("Too young to vote")</code>
+                    </div>
+                    
+                    <h4 class="text-xl font-semibold mb-3">Multiple Conditions</h4>
+                    <div class="bg-gray-900 text-white p-4 rounded-lg mb-4">
+                        <code class="text-green-400">score = 85<br>if score >= 90:<br>&nbsp;&nbsp;&nbsp;&nbsp;print("A grade")<br>elif score >= 80:<br>&nbsp;&nbsp;&nbsp;&nbsp;print("B grade")<br>elif score >= 70:<br>&nbsp;&nbsp;&nbsp;&nbsp;print("C grade")<br>else:<br>&nbsp;&nbsp;&nbsp;&nbsp;print("Need improvement")</code>
+                    </div>
+                    
+                    <h4 class="text-xl font-semibold mb-3">Comparison Operators</h4>
+                    <ul class="list-disc pl-6 mb-4">
+                        <li><code>==</code> Equal to</li>
+                        <li><code>!=</code> Not equal to</li>
+                        <li><code>&gt;</code> Greater than</li>
+                        <li><code>&lt;</code> Less than</li>
+                        <li><code>&gt;=</code> Greater than or equal</li>
+                        <li><code>&lt;=</code> Less than or equal</li>
+                    </ul>
+                `,
+                quiz: [
+                    {
+                        question: "Which keyword is used for multiple conditions?",
+                        options: ["elseif", "elif", "else if", "elsif"],
+                        correct: 1
+                    },
+                    {
+                        question: "What operator checks if two values are equal?",
+                        options: ["=", "==", "!=", "==="],
+                        correct: 1
+                    }
+                ],
+                exercise: {
+                    description: "Write a program that asks for a number and tells the user if it's positive, negative, or zero.",
+                    hint: "Use input() to get the number, convert it to int(), then use if/elif/else statements.",
+                    solution: 'number = int(input("Enter a number: "))\nif number > 0:\n    print("Positive")\nelif number < 0:\n    print("Negative")\nelse:\n    print("Zero")',
+                    check: (code) => code.includes('if') && code.includes('elif') && code.includes('else') && code.includes('int(')
+                }
+            },
+            {
+                id: 5,
+                title: "Loops",
+                difficulty: "Beginner",
+                content: `
+                    <h3 class="text-2xl font-bold mb-4">Loops 🔄</h3>
+                    <p class="mb-4">Repeat code efficiently using for and while loops.</p>
+                    
+                    <h4 class="text-xl font-semibold mb-3">For Loops</h4>
+                    <div class="bg-gray-900 text-white p-4 rounded-lg mb-4">
+                        <code class="text-green-400"># Print numbers 1 to 5<br>for i in range(1, 6):<br>&nbsp;&nbsp;&nbsp;&nbsp;print(i)<br><br># Loop through a string<br>for letter in "Python":<br>&nbsp;&nbsp;&nbsp;&nbsp;print(letter)</code>
+                    </div>
+                    
+                    <h4 class="text-xl font-semibold mb-3">While Loops</h4>
+                    <div class="bg-gray-900 text-white p-4 rounded-lg mb-4">
+                        <code class="text-green-400">count = 1<br>while count <= 5:<br>&nbsp;&nbsp;&nbsp;&nbsp;print(f"Count: {count}")<br>&nbsp;&nbsp;&nbsp;&nbsp;count += 1</code>
+                    </div>
+                    
+                    <h4 class="text-xl font-semibold mb-3">Range Function</h4>
+                    <ul class="list-disc pl-6 mb-4">
+                        <li><code>range(5)</code> - 0, 1, 2, 3, 4</li>
+                        <li><code>range(1, 6)</code> - 1, 2, 3, 4, 5</li>
+                        <li><code>range(0, 10, 2)</code> - 0, 2, 4, 6, 8</li>
+                    </ul>
+                `,
+                quiz: [
+                    {
+                        question: "What does range(3) produce?",
+                        options: ["1, 2, 3", "0, 1, 2", "0, 1, 2, 3", "1, 2"],
+                        correct: 1
+                    },
+                    {
+                        question: "Which loop is best when you don't know how many iterations you need?",
+                        options: ["for loop", "while loop", "both are same", "neither"],
+                        correct: 1
+                    }
+                ],
+                exercise: {
+                    description: "Write a program that prints the multiplication table for a number entered by the user (from 1 to 10).",
+                    hint: "Use input() to get the number, convert to int(), then use a for loop with range(1, 11).",
+                    solution: 'number = int(input("Enter a number: "))\nfor i in range(1, 11):\n    print(f"{number} x {i} = {number * i}")',
+                    check: (code) => code.includes('for') && code.includes('range') && code.includes('*') && code.includes('int(')
+                }
+            },
+            {
+                id: 6,
+                title: "Functions",
+                difficulty: "Intermediate",
+                content: `
+                    <h3 class="text-2xl font-bold mb-4">Functions 🔧</h3>
+                    <p class="mb-4">Create reusable blocks of code with functions.</p>
+                    
+                    <h4 class="text-xl font-semibold mb-3">Defining Functions</h4>
+                    <div class="bg-gray-900 text-white p-4 rounded-lg mb-4">
+                        <code class="text-green-400">def greet(name):<br>&nbsp;&nbsp;&nbsp;&nbsp;return f"Hello, {name}!"<br><br># Call the function<br>message = greet("Alice")<br>print(message)</code>
+                    </div>
+                    
+                    <h4 class="text-xl font-semibold mb-3">Parameters and Arguments</h4>
+                    <div class="bg-gray-900 text-white p-4 rounded-lg mb-4">
+                        <code class="text-green-400">def add_numbers(a, b):<br>&nbsp;&nbsp;&nbsp;&nbsp;return a + b<br><br>result = add_numbers(5, 3)<br>print(result)  # 8</code>
+                    </div>
+                    
+                    <h4 class="text-xl font-semibold mb-3">Default Parameters</h4>
+                    <div class="bg-gray-900 text-white p-4 rounded-lg mb-4">
+                        <code class="text-green-400">def greet(name, greeting="Hello"):<br>&nbsp;&nbsp;&nbsp;&nbsp;return f"{greeting}, {name}!"<br><br>print(greet("Bob"))           # Hello, Bob!<br>print(greet("Bob", "Hi"))     # Hi, Bob!</code>
+                    </div>
+                `,
+                quiz: [
+                    {
+                        question: "What keyword is used to define a function?",
+                        options: ["function", "def", "define", "func"],
+                        correct: 1
+                    },
+                    {
+                        question: "What keyword returns a value from a function?",
+                        options: ["give", "return", "send", "output"],
+                        correct: 1
+                    }
+                ],
+                exercise: {
+                    description: "Create a function called 'calculate_area' that takes length and width as parameters and returns the area of a rectangle.",
+                    hint: "Use def to define the function, multiply length and width, and use return to send back the result.",
+                    solution: 'def calculate_area(length, width):\n    return length * width\n\n# Test the function\narea = calculate_area(5, 3)\nprint(f"Area: {area}")',
+                    check: (code) => code.includes('def calculate_area') && code.includes('return') && code.includes('*')
+                }
+            },
+            {
+                id: 7,
+                title: "Lists & Tuples",
+                difficulty: "Intermediate",
+                content: `
+                    <h3 class="text-2xl font-bold mb-4">Lists & Tuples 📋</h3>
+                    <p class="mb-4">Store multiple items in ordered collections.</p>
+                    
+                    <h4 class="text-xl font-semibold mb-3">Lists (Mutable)</h4>
+                    <div class="bg-gray-900 text-white p-4 rounded-lg mb-4">
+                        <code class="text-green-400">fruits = ["apple", "banana", "orange"]<br>print(fruits[0])        # apple<br>fruits.append("grape")  # Add item<br>fruits[1] = "mango"     # Change item<br>print(len(fruits))      # 4</code>
+                    </div>
+                    
+                    <h4 class="text-xl font-semibold mb-3">List Methods</h4>
+                    <div class="bg-gray-900 text-white p-4 rounded-lg mb-4">
+                        <code class="text-green-400">numbers = [3, 1, 4, 1, 5]<br>numbers.sort()          # Sort the list<br>numbers.remove(1)       # Remove first occurrence<br>numbers.insert(0, 0)    # Insert at index 0</code>
+                    </div>
+                    
+                    <h4 class="text-xl font-semibold mb-3">Tuples (Immutable)</h4>
+                    <div class="bg-gray-900 text-white p-4 rounded-lg mb-4">
+                        <code class="text-green-400">coordinates = (10, 20)<br>x, y = coordinates      # Unpacking<br>print(f"X: {x}, Y: {y}")</code>
+                    </div>
+                `,
+                quiz: [
+                    {
+                        question: "Which method adds an item to the end of a list?",
+                        options: ["add()", "append()", "insert()", "push()"],
+                        correct: 1
+                    },
+                    {
+                        question: "What's the main difference between lists and tuples?",
+                        options: ["Lists are faster", "Tuples can't be changed", "Lists use ()", "No difference"],
+                        correct: 1
+                    }
+                ],
+                exercise: {
+                    description: "Create a list of your top 5 favorite movies, then add a 6th movie and print the entire list.",
+                    hint: "Create a list with square brackets, use append() to add a movie, then print the list.",
+                    solution: 'movies = ["Movie 1", "Movie 2", "Movie 3", "Movie 4", "Movie 5"]\nmovies.append("Movie 6")\nprint(movies)',
+                    check: (code) => code.includes('[') && code.includes(']') && code.includes('append(') && code.includes('print(')
+                }
+            },
+            {
+                id: 8,
+                title: "Dictionaries",
+                difficulty: "Intermediate",
+                content: `
+                    <h3 class="text-2xl font-bold mb-4">Dictionaries 📚</h3>
+                    <p class="mb-4">Store data in key-value pairs for fast lookups.</p>
+                    
+                    <h4 class="text-xl font-semibold mb-3">Creating Dictionaries</h4>
+                    <div class="bg-gray-900 text-white p-4 rounded-lg mb-4">
+                        <code class="text-green-400">student = {<br>&nbsp;&nbsp;&nbsp;&nbsp;"name": "Alice",<br>&nbsp;&nbsp;&nbsp;&nbsp;"age": 20,<br>&nbsp;&nbsp;&nbsp;&nbsp;"grade": "A"<br>}<br>print(student["name"])  # Alice</code>
+                    </div>
+                    
+                    <h4 class="text-xl font-semibold mb-3">Dictionary Operations</h4>
+                    <div class="bg-gray-900 text-white p-4 rounded-lg mb-4">
+                        <code class="text-green-400">student["email"] = "alice@email.com"  # Add<br>student["age"] = 21                   # Update<br>del student["grade"]                  # Delete<br><br>print(student.keys())    # All keys<br>print(student.values())  # All values</code>
+                    </div>
+                    
+                    <h4 class="text-xl font-semibold mb-3">Looping Through Dictionaries</h4>
+                    <div class="bg-gray-900 text-white p-4 rounded-lg mb-4">
+                        <code class="text-green-400">for key, value in student.items():<br>&nbsp;&nbsp;&nbsp;&nbsp;print(f"{key}: {value}")</code>
+                    </div>
+                `,
+                quiz: [
+                    {
+                        question: "How do you access a value in a dictionary?",
+                        options: ["dict(key)", "dict[key]", "dict.key", "dict->key"],
+                        correct: 1
+                    },
+                    {
+                        question: "Which method returns all key-value pairs?",
+                        options: ["pairs()", "items()", "all()", "entries()"],
+                        correct: 1
+                    }
+                ],
+                exercise: {
+                    description: "Create a dictionary representing a book with title, author, year, and pages. Then print each key-value pair.",
+                    hint: "Use curly braces {}, separate keys and values with colons, and use items() to loop through.",
+                    solution: 'book = {\n    "title": "Python Guide",\n    "author": "John Doe",\n    "year": 2023,\n    "pages": 300\n}\n\nfor key, value in book.items():\n    print(f"{key}: {value}")',
+                    check: (code) => code.includes('{') && code.includes(':') && code.includes('items()') && code.includes('for')
+                }
+            },
+            {
+                id: 9,
+                title: "File Handling",
+                difficulty: "Intermediate",
+                content: `
+                    <h3 class="text-2xl font-bold mb-4">File Handling 📁</h3>
+                    <p class="mb-4">Read from and write to files in Python.</p>
+                    
+                    <h4 class="text-xl font-semibold mb-3">Reading Files</h4>
+                    <div class="bg-gray-900 text-white p-4 rounded-lg mb-4">
+                        <code class="text-green-400"># Method 1: Manual close<br>file = open("data.txt", "r")<br>content = file.read()<br>file.close()<br><br># Method 2: With statement (recommended)<br>with open("data.txt", "r") as file:<br>&nbsp;&nbsp;&nbsp;&nbsp;content = file.read()<br>&nbsp;&nbsp;&nbsp;&nbsp;print(content)</code>
+                    </div>
+                    
+                    <h4 class="text-xl font-semibold mb-3">Writing Files</h4>
+                    <div class="bg-gray-900 text-white p-4 rounded-lg mb-4">
+                        <code class="text-green-400">with open("output.txt", "w") as file:<br>&nbsp;&nbsp;&nbsp;&nbsp;file.write("Hello, World!")<br>&nbsp;&nbsp;&nbsp;&nbsp;file.write("\\nSecond line")<br><br># Append to file<br>with open("output.txt", "a") as file:<br>&nbsp;&nbsp;&nbsp;&nbsp;file.write("\\nAppended text")</code>
+                    </div>
+                    
+                    <h4 class="text-xl font-semibold mb-3">File Modes</h4>
+                    <ul class="list-disc pl-6 mb-4">
+                        <li><code>"r"</code> - Read (default)</li>
+                        <li><code>"w"</code> - Write (overwrites)</li>
+                        <li><code>"a"</code> - Append</li>
+                        <li><code>"r+"</code> - Read and write</li>
+                    </ul>
+                `,
+                quiz: [
+                    {
+                        question: "Which file mode overwrites existing content?",
+                        options: ["r", "w", "a", "r+"],
+                        correct: 1
+                    },
+                    {
+                        question: "What's the advantage of using 'with' statement?",
+                        options: ["Faster execution", "Automatic file closing", "Better security", "Smaller file size"],
+                        correct: 1
+                    }
+                ],
+                exercise: {
+                    description: "Write a program that creates a file called 'my_info.txt' and writes your name, age, and favorite hobby to it.",
+                    hint: "Use 'with open()' statement with 'w' mode, and write() method to add text.",
+                    solution: 'with open("my_info.txt", "w") as file:\n    file.write("Name: Your Name\\n")\n    file.write("Age: 25\\n")\n    file.write("Hobby: Programming\\n")\n\nprint("File created successfully!")',
+                    check: (code) => code.includes('with open(') && code.includes('"w"') && code.includes('write(')
+                }
+            },
+            {
+                id: 10,
+                title: "Error Handling",
+                difficulty: "Intermediate",
+                content: `
+                    <h3 class="text-2xl font-bold mb-4">Error Handling ⚠️</h3>
+                    <p class="mb-4">Handle errors gracefully using try-except blocks.</p>
+                    
+                    <h4 class="text-xl font-semibold mb-3">Basic Try-Except</h4>
+                    <div class="bg-gray-900 text-white p-4 rounded-lg mb-4">
+                        <code class="text-green-400">try:<br>&nbsp;&nbsp;&nbsp;&nbsp;number = int(input("Enter a number: "))<br>&nbsp;&nbsp;&nbsp;&nbsp;result = 10 / number<br>&nbsp;&nbsp;&nbsp;&nbsp;print(f"Result: {result}")<br>except ValueError:<br>&nbsp;&nbsp;&nbsp;&nbsp;print("Please enter a valid number!")<br>except ZeroDivisionError:<br>&nbsp;&nbsp;&nbsp;&nbsp;print("Cannot divide by zero!")</code>
+                    </div>
+                    
+                    <h4 class="text-xl font-semibold mb-3">Finally Block</h4>
+                    <div class="bg-gray-900 text-white p-4 rounded-lg mb-4">
+                        <code class="text-green-400">try:<br>&nbsp;&nbsp;&nbsp;&nbsp;file = open("data.txt", "r")<br>&nbsp;&nbsp;&nbsp;&nbsp;content = file.read()<br>except FileNotFoundError:<br>&nbsp;&nbsp;&nbsp;&nbsp;print("File not found!")<br>finally:<br>&nbsp;&nbsp;&nbsp;&nbsp;print("This always runs")</code>
+                    </div>
+                    
+                    <h4 class="text-xl font-semibold mb-3">Common Exceptions</h4>
+                    <ul class="list-disc pl-6 mb-4">
+                        <li><code>ValueError</code> - Invalid value</li>
+                        <li><code>TypeError</code> - Wrong type</li>
+                        <li><code>FileNotFoundError</code> - File doesn't exist</li>
+                        <li><code>IndexError</code> - Index out of range</li>
+                        <li><code>KeyError</code> - Key not found in dictionary</li>
+                    </ul>
+                `,
+                quiz: [
+                    {
+                        question: "Which block always executes regardless of errors?",
+                        options: ["try", "except", "finally", "else"],
+                        correct: 2
+                    },
+                    {
+                        question: "What exception occurs when dividing by zero?",
+                        options: ["ValueError", "TypeError", "ZeroDivisionError", "ArithmeticError"],
+                        correct: 2
+                    }
+                ],
+                exercise: {
+                    description: "Create a calculator that asks for two numbers and an operation (+, -, *, /). Handle potential errors like invalid input and division by zero.",
+                    hint: "Use try-except blocks to catch ValueError for invalid numbers and ZeroDivisionError for division by zero.",
+                    solution: 'try:\n    num1 = float(input("First number: "))\n    num2 = float(input("Second number: "))\n    op = input("Operation (+, -, *, /): ")\n    \n    if op == "+":\n        result = num1 + num2\n    elif op == "-":\n        result = num1 - num2\n    elif op == "*":\n        result = num1 * num2\n    elif op == "/":\n        result = num1 / num2\n    else:\n        print("Invalid operation")\n        exit()\n    \n    print(f"Result: {result}")\n    \nexcept ValueError:\n    print("Please enter valid numbers!")\nexcept ZeroDivisionError:\n    print("Cannot divide by zero!")',
+                    check: (code) => code.includes('try:') && code.includes('except') && (code.includes('ValueError') || code.includes('ZeroDivisionError'))
+                }
+            },
+            {
+                id: 11,
+                title: "Object-Oriented Programming",
+                difficulty: "Advanced",
+                content: `
+                    <h3 class="text-2xl font-bold mb-4">Object-Oriented Programming 🏗️</h3>
+                    <p class="mb-4">Create classes and objects to organize your code better.</p>
+                    
+                    <h4 class="text-xl font-semibold mb-3">Creating Classes</h4>
+                    <div class="bg-gray-900 text-white p-4 rounded-lg mb-4">
+                        <code class="text-green-400">class Dog:<br>&nbsp;&nbsp;&nbsp;&nbsp;def __init__(self, name, breed):<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.name = name<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.breed = breed<br><br>&nbsp;&nbsp;&nbsp;&nbsp;def bark(self):<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return f"{self.name} says Woof!"<br><br># Create objects<br>my_dog = Dog("Buddy", "Golden Retriever")<br>print(my_dog.bark())</code>
+                    </div>
+                    
+                    <h4 class="text-xl font-semibold mb-3">Inheritance</h4>
+                    <div class="bg-gray-900 text-white p-4 rounded-lg mb-4">
+                        <code class="text-green-400">class Animal:<br>&nbsp;&nbsp;&nbsp;&nbsp;def __init__(self, name):<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.name = name<br><br>&nbsp;&nbsp;&nbsp;&nbsp;def speak(self):<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pass<br><br>class Cat(Animal):<br>&nbsp;&nbsp;&nbsp;&nbsp;def speak(self):<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return f"{self.name} says Meow!"</code>
+                    </div>
+                    
+                    <h4 class="text-xl font-semibold mb-3">Key Concepts</h4>
+                    <ul class="list-disc pl-6 mb-4">
+                        <li><strong>Class:</strong> Blueprint for objects</li>
+                        <li><strong>Object:</strong> Instance of a class</li>
+                        <li><strong>__init__:</strong> Constructor method</li>
+                        <li><strong>self:</strong> Reference to current instance</li>
+                        <li><strong>Inheritance:</strong> Child class inherits from parent</li>
+                    </ul>
+                `,
+                quiz: [
+                    {
+                        question: "What method is called when creating a new object?",
+                        options: ["__new__", "__init__", "__create__", "__start__"],
+                        correct: 1
+                    },
+                    {
+                        question: "What does 'self' represent in a class method?",
+                        options: ["The class", "The method", "The current instance", "The parent class"],
+                        correct: 2
+                    }
+                ],
+                exercise: {
+                    description: "Create a 'Car' class with make, model, and year attributes. Add a method that returns a description of the car.",
+                    hint: "Use __init__ to set attributes and create a method that uses self to access the attributes.",
+                    solution: 'class Car:\n    def __init__(self, make, model, year):\n        self.make = make\n        self.model = model\n        self.year = year\n    \n    def description(self):\n        return f"{self.year} {self.make} {self.model}"\n\n# Create and test\nmy_car = Car("Toyota", "Camry", 2022)\nprint(my_car.description())',
+                    check: (code) => code.includes('class Car:') && code.includes('__init__') && code.includes('self.') && code.includes('def ')
+                }
+            },
+            {
+                id: 12,
+                title: "Modules & Packages",
+                difficulty: "Advanced",
+                content: `
+                    <h3 class="text-2xl font-bold mb-4">Modules & Packages 📦</h3>
+                    <p class="mb-4">Organize and reuse code using modules and packages.</p>
+                    
+                    <h4 class="text-xl font-semibold mb-3">Importing Modules</h4>
+                    <div class="bg-gray-900 text-white p-4 rounded-lg mb-4">
+                        <code class="text-green-400">import math<br>print(math.pi)          # 3.141592653589793<br>print(math.sqrt(16))    # 4.0<br><br>from datetime import datetime<br>now = datetime.now()<br>print(now)</code>
+                    </div>
+                    
+                    <h4 class="text-xl font-semibold mb-3">Creating Your Own Module</h4>
+                    <div class="bg-gray-900 text-white p-4 rounded-lg mb-4">
+                        <code class="text-green-400"># File: my_utils.py<br>def greet(name):<br>&nbsp;&nbsp;&nbsp;&nbsp;return f"Hello, {name}!"<br><br>PI = 3.14159<br><br># File: main.py<br>import my_utils<br>print(my_utils.greet("Alice"))<br>print(my_utils.PI)</code>
+                    </div>
+                    
+                    <h4 class="text-xl font-semibold mb-3">Popular Built-in Modules</h4>
+                    <ul class="list-disc pl-6 mb-4">
+                        <li><code>os</code> - Operating system interface</li>
+                        <li><code>random</code> - Generate random numbers</li>
+                        <li><code>json</code> - Work with JSON data</li>
+                        <li><code>datetime</code> - Date and time handling</li>
+                        <li><code>re</code> - Regular expressions</li>
+                    </ul>
+                `,
+                quiz: [
+                    {
+                        question: "Which statement imports only specific functions from a module?",
+                        options: ["import module", "from module import function", "include module", "use module"],
+                        correct: 1
+                    },
+                    {
+                        question: "What file extension do Python modules have?",
+                        options: [".python", ".py", ".mod", ".module"],
+                        correct: 1
+                    }
+                ],
+                exercise: {
+                    description: "Use the random module to create a simple number guessing game where the computer picks a random number between 1-10.",
+                    hint: "Import random, use random.randint(1, 10) to generate a number, and compare with user input.",
+                    solution: 'import random\n\nnumber = random.randint(1, 10)\nguess = int(input("Guess a number between 1-10: "))\n\nif guess == number:\n    print("Correct! You won!")\nelse:\n    print(f"Wrong! The number was {number}")',
+                    check: (code) => code.includes('import random') && code.includes('randint') && code.includes('input(')
+                }
+            },
+            {
+                id: 13,
+                title: "Regular Expressions",
+                difficulty: "Advanced",
+                content: `
+                    <h3 class="text-2xl font-bold mb-4">Regular Expressions 🔍</h3>
+                    <p class="mb-4">Pattern matching and text processing with regex.</p>
+                    
+                    <h4 class="text-xl font-semibold mb-3">Basic Pattern Matching</h4>
+                    <div class="bg-gray-900 text-white p-4 rounded-lg mb-4">
+                        <code class="text-green-400">import re<br><br>text = "My phone number is 123-456-7890"<br>pattern = r"\\d{3}-\\d{3}-\\d{4}"<br>match = re.search(pattern, text)<br><br>if match:<br>&nbsp;&nbsp;&nbsp;&nbsp;print(f"Found: {match.group()}")</code>
+                    </div>
+                    
+                    <h4 class="text-xl font-semibold mb-3">Common Patterns</h4>
+                    <ul class="list-disc pl-6 mb-4">
+                        <li><code>\\d</code> - Any digit (0-9)</li>
+                        <li><code>\\w</code> - Any word character</li>
+                        <li><code>\\s</code> - Any whitespace</li>
+                        <li><code>+</code> - One or more</li>
+                        <li><code>*</code> - Zero or more</li>
+                        <li><code>?</code> - Zero or one</li>
+                        <li><code>{n}</code> - Exactly n times</li>
+                    </ul>
+                    
+                    <h4 class="text-xl font-semibold mb-3">Finding All Matches</h4>
+                    <div class="bg-gray-900 text-white p-4 rounded-lg mb-4">
+                        <code class="text-green-400">text = "Contact us at john@email.com or jane@company.org"<br>emails = re.findall(r"\\w+@\\w+\\.\\w+", text)<br>print(emails)  # ['john@email.com', 'jane@company.org']</code>
+                    </div>
+                `,
+                quiz: [
+                    {
+                        question: "What does \\d+ match?",
+                        options: ["One digit", "One or more digits", "Any character", "One or more letters"],
+                        correct: 1
+                    },
+                    {
+                        question: "Which function finds all matches in a string?",
+                        options: ["re.search()", "re.match()", "re.findall()", "re.find()"],
+                        correct: 2
+                    }
+                ],
+                exercise: {
+                    description: "Write a program that validates email addresses using regex. Test it with valid and invalid emails.",
+                    hint: "Use a pattern like r'\\w+@\\w+\\.\\w+' and re.match() to validate the entire string.",
+                    solution: 'import re\n\ndef validate_email(email):\n    pattern = r"^\\w+@\\w+\\.\\w+$"\n    return bool(re.match(pattern, email))\n\n# Test emails\ntest_emails = ["user@domain.com", "invalid-email", "test@site.org"]\n\nfor email in test_emails:\n    if validate_email(email):\n        print(f"{email} is valid")\n    else:\n        print(f"{email} is invalid")',
+                    check: (code) => code.includes('import re') && code.includes('re.match') && code.includes('\\w+@\\w+')
+                }
+            },
+            {
+                id: 14,
+                title: "Decorators & Generators",
+                difficulty: "Advanced",
+                content: `
+                    <h3 class="text-2xl font-bold mb-4">Decorators & Generators ✨</h3>
+                    <p class="mb-4">Advanced Python features for elegant and efficient code.</p>
+                    
+                    <h4 class="text-xl font-semibold mb-3">Decorators</h4>
+                    <div class="bg-gray-900 text-white p-4 rounded-lg mb-4">
+                        <code class="text-green-400">def timer_decorator(func):<br>&nbsp;&nbsp;&nbsp;&nbsp;def wrapper(*args, **kwargs):<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;import time<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;start = time.time()<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;result = func(*args, **kwargs)<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;end = time.time()<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print(f"Function took {end-start:.4f} seconds")<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return result<br>&nbsp;&nbsp;&nbsp;&nbsp;return wrapper<br><br>@timer_decorator<br>def slow_function():<br>&nbsp;&nbsp;&nbsp;&nbsp;import time<br>&nbsp;&nbsp;&nbsp;&nbsp;time.sleep(1)<br>&nbsp;&nbsp;&nbsp;&nbsp;return "Done!"</code>
+                    </div>
+                    
+                    <h4 class="text-xl font-semibold mb-3">Generators</h4>
+                    <div class="bg-gray-900 text-white p-4 rounded-lg mb-4">
+                        <code class="text-green-400">def fibonacci_generator(n):<br>&nbsp;&nbsp;&nbsp;&nbsp;a, b = 0, 1<br>&nbsp;&nbsp;&nbsp;&nbsp;for _ in range(n):<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;yield a<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a, b = b, a + b<br><br># Use the generator<br>for num in fibonacci_generator(10):<br>&nbsp;&nbsp;&nbsp;&nbsp;print(num, end=" ")</code>
+                    </div>
+                    
+                    <h4 class="text-xl font-semibold mb-3">Generator Expressions</h4>
+                    <div class="bg-gray-900 text-white p-4 rounded-lg mb-4">
+                        <code class="text-green-400"># List comprehension (creates list in memory)<br>squares_list = [x**2 for x in range(10)]<br><br># Generator expression (lazy evaluation)<br>squares_gen = (x**2 for x in range(10))<br><br>for square in squares_gen:<br>&nbsp;&nbsp;&nbsp;&nbsp;print(square)</code>
+                    </div>
+                `,
+                quiz: [
+                    {
+                        question: "What keyword is used in generators to return values?",
+                        options: ["return", "yield", "give", "send"],
+                        correct: 1
+                    },
+                    {
+                        question: "What symbol is used for decorator syntax?",
+                        options: ["#", "@", "&", "%"],
+                        correct: 1
+                    }
+                ],
+                exercise: {
+                    description: "Create a decorator that logs when a function is called and a generator that produces even numbers up to a given limit.",
+                    hint: "For the decorator, print before calling the function. For the generator, use yield with a loop and modulo operator.",
+                    solution: 'def log_decorator(func):\n    def wrapper(*args, **kwargs):\n        print(f"Calling function: {func.__name__}")\n        return func(*args, **kwargs)\n    return wrapper\n\ndef even_numbers(limit):\n    for i in range(0, limit + 1, 2):\n        yield i\n\n@log_decorator\ndef greet(name):\n    return f"Hello, {name}!"\n\n# Test\nprint(greet("Alice"))\nprint("Even numbers up to 10:")\nfor num in even_numbers(10):\n    print(num, end=" ")',
+                    check: (code) => code.includes('def ') && code.includes('yield') && code.includes('@') && code.includes('wrapper')
+                }
+            },
+            {
+                id: 15,
+                title: "Testing & Best Practices",
+                difficulty: "Advanced",
+                content: `
+                    <h3 class="text-2xl font-bold mb-4">Testing & Best Practices 🧪</h3>
+                    <p class="mb-4">Write reliable, maintainable code with testing and best practices.</p>
+                    
+                    <h4 class="text-xl font-semibold mb-3">Unit Testing</h4>
+                    <div class="bg-gray-900 text-white p-4 rounded-lg mb-4">
+                        <code class="text-green-400">import unittest<br><br>def add(a, b):<br>&nbsp;&nbsp;&nbsp;&nbsp;return a + b<br><br>class TestMathFunctions(unittest.TestCase):<br>&nbsp;&nbsp;&nbsp;&nbsp;def test_add_positive(self):<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.assertEqual(add(2, 3), 5)<br><br>&nbsp;&nbsp;&nbsp;&nbsp;def test_add_negative(self):<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.assertEqual(add(-1, 1), 0)<br><br>if __name__ == "__main__":<br>&nbsp;&nbsp;&nbsp;&nbsp;unittest.main()</code>
+                    </div>
+                    
+                    <h4 class="text-xl font-semibold mb-3">Code Style (PEP 8)</h4>
+                    <div class="bg-gray-900 text-white p-4 rounded-lg mb-4">
+                        <code class="text-green-400"># Good practices<br>def calculate_area(length, width):<br>&nbsp;&nbsp;&nbsp;&nbsp;"""Calculate rectangle area."""<br>&nbsp;&nbsp;&nbsp;&nbsp;return length * width<br><br>class BankAccount:<br>&nbsp;&nbsp;&nbsp;&nbsp;"""Represents a bank account."""<br>&nbsp;&nbsp;&nbsp;&nbsp;def __init__(self, balance=0):<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self._balance = balance<br><br># Constants in UPPER_CASE<br>MAX_ATTEMPTS = 3</code>
+                    </div>
+                    
+                    <h4 class="text-xl font-semibold mb-3">Best Practices</h4>
+                    <ul class="list-disc pl-6 mb-4">
+                        <li>Use descriptive variable names</li>
+                        <li>Write docstrings for functions</li>
+                        <li>Keep functions small and focused</li>
+                        <li>Handle errors appropriately</li>
+                        <li>Use virtual environments</li>
+                        <li>Follow PEP 8 style guide</li>
+                        <li>Write tests for your code</li>
+                    </ul>
+                    
+                    <div class="bg-blue-100 p-4 rounded-lg mt-6">
+                        <h4 class="text-xl font-semibold text-blue-800 mb-2">🎉 Congratulations!</h4>
+                        <p class="text-blue-700">You've completed the Python Journey! You now have a solid foundation in Python programming. Keep practicing and building projects to master these concepts.</p>
+                    </div>
+                `,
+                quiz: [
+                    {
+                        question: "Which method is used to check if two values are equal in unit tests?",
+                        options: ["assertEqual", "checkEqual", "assertSame", "testEqual"],
+                        correct: 0
+                    },
+                    {
+                        question: "What is PEP 8?",
+                        options: ["Python version", "Style guide", "Testing framework", "Package manager"],
+                        correct: 1
+                    }
+                ],
+                exercise: {
+                    description: "Write a simple calculator function and create unit tests for it. Test addition, subtraction, multiplication, and division.",
+                    hint: "Create a calculator function with operation parameter, then use unittest.TestCase to test each operation.",
+                    solution: 'import unittest\n\ndef calculator(a, b, operation):\n    """Simple calculator function."""\n    if operation == "add":\n        return a + b\n    elif operation == "subtract":\n        return a - b\n    elif operation == "multiply":\n        return a * b\n    elif operation == "divide":\n        if b == 0:\n            raise ValueError("Cannot divide by zero")\n        return a / b\n    else:\n        raise ValueError("Invalid operation")\n\nclass TestCalculator(unittest.TestCase):\n    def test_addition(self):\n        self.assertEqual(calculator(2, 3, "add"), 5)\n    \n    def test_subtraction(self):\n        self.assertEqual(calculator(5, 3, "subtract"), 2)\n    \n    def test_multiplication(self):\n        self.assertEqual(calculator(4, 3, "multiply"), 12)\n    \n    def test_division(self):\n        self.assertEqual(calculator(10, 2, "divide"), 5)\n    \n    def test_division_by_zero(self):\n        with self.assertRaises(ValueError):\n            calculator(10, 0, "divide")\n\nif __name__ == "__main__":\n    unittest.main()',
+                    check: (code) => code.includes('unittest') && code.includes('TestCase') && code.includes('assertEqual') && code.includes('def calculator')
+                }
             }
-        };
+        ];
 
-        // Quiz answers
-        const quizAnswers = {
-            intro: 'b',
-            syntax: 'b'
-        };
+        let currentLesson = 0;
+        let completedLessons = new Set();
 
-        // Initialize the app
+        // Initialize the application
         function initializeApp() {
-            populateSidebar();
-            updateStats();
-            loadSavedProgress();
+            renderNavigation();
+            updateProgress();
         }
 
-        // Populate sidebar with lessons
-        function populateSidebar() {
-            const levels = ['beginner', 'intermediate', 'advanced', 'projects'];
-            
-            levels.forEach(level => {
-                const container = document.getElementById(`${level}Lessons`);
-                if (!container) return;
-                
-                container.innerHTML = '';
-                
-                lessons[level].forEach(lesson => {
-                    const isCompleted = learningData.completedLessons.has(lesson.id);
-                    const lessonElement = document.createElement('div');
-                    lessonElement.className = `lesson-item p-2 rounded cursor-pointer border-l-4 ${
-                        isCompleted ? 'lesson-completed border-green-500' : 'border-transparent hover:bg-gray-50'
-                    }`;
-                    lessonElement.onclick = () => loadLesson(lesson.id);
-                    
-                    lessonElement.innerHTML = `
-                        <div class="flex items-center justify-between">
-                            <div class="flex-1">
-                                <div class="font-medium text-gray-800">${lesson.title}</div>
-                                <div class="text-xs text-gray-500">${lesson.description}</div>
+        // Render lesson navigation
+        function renderNavigation() {
+            const nav = document.getElementById('lesson-nav');
+            nav.innerHTML = lessons.map((lesson, index) => {
+                const isCompleted = completedLessons.has(lesson.id);
+                const isCurrent = index === currentLesson;
+                return `
+                    <div class="flex items-center justify-between p-3 rounded-lg cursor-pointer transition-colors ${
+                        isCurrent ? 'bg-blue-100 border-l-4 border-blue-500' : 'hover:bg-gray-50'
+                    }" onclick="goToLesson(${index})">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-8 h-8 rounded-full flex items-center justify-center ${
+                                isCompleted ? 'bg-green-500 text-white' : 
+                                isCurrent ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-600'
+                            }">
+                                ${isCompleted ? '✓' : lesson.id}
                             </div>
-                            <div class="flex items-center space-x-2">
-                                ${isCompleted ? '<span class="text-green-600 text-sm">✓</span>' : ''}
-                                <span class="text-xs text-gray-400">${lesson.xp} XP</span>
+                            <div>
+                                <div class="font-medium text-sm ${isCurrent ? 'text-blue-700' : 'text-gray-800'}">${lesson.title}</div>
+                                <div class="text-xs text-gray-500">${lesson.difficulty}</div>
                             </div>
-                        </div>
-                    `;
-                    
-                    container.appendChild(lessonElement);
-                });
-            });
-        }
-
-        // Load lesson content
-        function loadLesson(lessonId) {
-            // Update sidebar selection
-            document.querySelectorAll('.lesson-item').forEach(item => {
-                item.classList.remove('lesson-current', 'border-blue-500', 'bg-blue-50');
-            });
-            
-            // Find and highlight current lesson
-            const currentLesson = document.querySelector(`[onclick*="${lessonId}"]`);
-            if (currentLesson && !learningData.completedLessons.has(lessonId)) {
-                currentLesson.classList.add('lesson-current', 'border-blue-500', 'bg-blue-50');
-            }
-
-            // Load content
-            if (lessonContent[lessonId]) {
-                document.getElementById('lessonContent').innerHTML = lessonContent[lessonId].content;
-            } else {
-                // Default content for lessons not yet implemented
-                const lesson = findLessonById(lessonId);
-                document.getElementById('lessonContent').innerHTML = `
-                    <div class="max-w-4xl">
-                        <div class="mb-6">
-                            <h1 class="text-3xl font-bold text-gray-800 mb-2">${lesson ? lesson.title : 'Coming Soon'}</h1>
-                            <div class="flex items-center space-x-4 text-sm text-gray-600">
-                                <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full font-medium">COMING SOON</span>
-                                <span>⏱️ Available soon</span>
-                                ${lesson ? `<span>⭐ ${lesson.xp} XP</span>` : ''}
-                            </div>
-                        </div>
-                        <div class="bg-white rounded-lg shadow-sm p-6 text-center">
-                            <div class="text-6xl mb-4">🚧</div>
-                            <h2 class="text-xl font-semibold mb-2">Lesson Under Construction</h2>
-                            <p class="text-gray-600">${lesson ? lesson.description : 'This lesson is being prepared'}</p>
-                            <p class="text-gray-500 mt-2">This lesson will be available soon!</p>
                         </div>
                     </div>
                 `;
-            }
+            }).join('');
         }
 
-        // Find lesson by ID
-        function findLessonById(id) {
-            for (const level in lessons) {
-                const lesson = lessons[level].find(l => l.id === id);
-                if (lesson) return lesson;
-            }
-            return null;
+        // Start learning journey
+        function startLearning() {
+            document.getElementById('welcome-screen').classList.add('hidden');
+            document.getElementById('lesson-content').classList.remove('hidden');
+            loadLesson(0);
         }
 
-        // Complete lesson
-        function completeLesson(lessonId) {
-            if (!learningData.completedLessons.has(lessonId)) {
-                learningData.completedLessons.add(lessonId);
-                const lesson = findLessonById(lessonId);
-                if (lesson) {
-                    learningData.totalXP += lesson.xp;
-                    showXPGain(lesson.xp);
-                }
-                updateStreak();
-                updateStats();
-                populateSidebar();
-                saveProgress();
-                checkAchievements();
-            }
+        // Go to specific lesson
+        function goToLesson(lessonIndex) {
+            currentLesson = lessonIndex;
+            loadLesson(lessonIndex);
+            renderNavigation();
         }
 
-        // Show XP gain animation
-        function showXPGain(xp) {
-            const notification = document.createElement('div');
-            notification.className = 'fixed top-20 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 transform transition-all duration-500';
-            notification.innerHTML = `+${xp} XP earned! 🎉`;
-            document.body.appendChild(notification);
+        // Load lesson content
+        function loadLesson(lessonIndex) {
+            const lesson = lessons[lessonIndex];
             
+            document.getElementById('lesson-title').textContent = lesson.title;
+            document.getElementById('lesson-difficulty').textContent = `${lesson.difficulty} • Lesson ${lesson.id} of ${lessons.length}`;
+            document.getElementById('lesson-body').innerHTML = lesson.content;
+            
+            // Load quiz
+            loadQuiz(lesson.quiz);
+            
+            // Load exercise
+            loadExercise(lesson.exercise);
+            
+            // Update navigation buttons
+            document.getElementById('prev-btn').style.display = lessonIndex === 0 ? 'none' : 'block';
+            document.getElementById('next-btn').textContent = lessonIndex === lessons.length - 1 ? 'Complete Course' : 'Next →';
+            
+            // Reset quiz and exercise states
+            document.getElementById('quiz-result').classList.add('hidden');
+            document.getElementById('exercise-result').classList.add('hidden');
+            document.getElementById('hint-box').classList.add('hidden');
+            document.getElementById('code-editor').value = '';
+            document.getElementById('code-output').textContent = 'Ready to run your code...';
+            
+            // Show lesson content with animation
+            document.getElementById('lesson-content').classList.add('fade-in');
             setTimeout(() => {
-                notification.style.transform = 'translateY(-20px)';
-                notification.style.opacity = '0';
-                setTimeout(() => notification.remove(), 500);
-            }, 2000);
+                document.getElementById('lesson-content').classList.remove('fade-in');
+            }, 500);
         }
 
-        // Check quiz answer
-        function checkQuiz(lessonId, answer) {
-            const buttons = document.querySelectorAll(`#quiz-${lessonId} .quiz-btn`);
-            const result = document.getElementById(`quiz-${lessonId}-result`);
-            const correctAnswer = quizAnswers[lessonId];
+        // Load quiz questions
+        function loadQuiz(quizData) {
+            const quizContent = document.getElementById('quiz-content');
+            quizContent.innerHTML = quizData.map((q, index) => `
+                <div class="mb-4">
+                    <p class="font-medium mb-2">${index + 1}. ${q.question}</p>
+                    <div class="space-y-2">
+                        ${q.options.map((option, optIndex) => `
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="radio" name="q${index}" value="${optIndex}" class="text-blue-500">
+                                <span class="text-sm">${option}</span>
+                            </label>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Check quiz answers
+        function checkQuiz() {
+            const lesson = lessons[currentLesson];
+            const quizResult = document.getElementById('quiz-result');
+            let correct = 0;
             
-            buttons.forEach(btn => {
-                btn.disabled = true;
-                btn.classList.add('cursor-not-allowed', 'opacity-75');
+            lesson.quiz.forEach((q, index) => {
+                const selected = document.querySelector(`input[name="q${index}"]:checked`);
+                if (selected && parseInt(selected.value) === q.correct) {
+                    correct++;
+                }
             });
             
-            const clickedButton = event.target;
-            
-            if (answer === correctAnswer) {
-                result.innerHTML = '<div class="text-green-600 font-semibold">🎉 Correct! +25 XP bonus</div>';
-                clickedButton.classList.add('bg-green-100', 'border-green-500');
-                learningData.totalXP += 25;
-                showXPGain(25);
-            } else {
-                result.innerHTML = '<div class="text-red-600 font-semibold">❌ Incorrect. Try again next time!</div>';
-                clickedButton.classList.add('bg-red-100', 'border-red-500');
-                // Show correct answer
-                buttons.forEach(btn => {
-                    if (btn.getAttribute('onclick').includes(`'${correctAnswer}'`)) {
-                        btn.classList.add('bg-green-100', 'border-green-500');
-                    }
-                });
-            }
-            result.classList.remove('hidden');
-            updateStats();
-        }
-
-        // Update streak
-        function updateStreak() {
-            const today = new Date().toDateString();
-            if (learningData.lastLearningDate !== today) {
-                const yesterday = new Date();
-                yesterday.setDate(yesterday.getDate() - 1);
-                
-                if (learningData.lastLearningDate === yesterday.toDateString()) {
-                    learningData.currentStreak++;
-                } else {
-                    learningData.currentStreak = 1;
-                }
-                
-                if (learningData.currentStreak > learningData.longestStreak) {
-                    learningData.longestStreak = learningData.currentStreak;
-                }
-                
-                learningData.lastLearningDate = today;
-            }
-        }
-
-        // Update stats display
-        function updateStats() {
-            document.getElementById('streakCounter').textContent = `${learningData.currentStreak} day streak`;
-            document.getElementById('xpCounter').textContent = `${learningData.totalXP.toLocaleString()} XP`;
-        }
-
-        // Check for new achievements
-        function checkAchievements() {
-            const completedCount = learningData.completedLessons.size;
-            
-            if (completedCount >= 1 && !learningData.achievements.includes('first_steps')) {
-                learningData.achievements.push('first_steps');
-                showAchievement('🥇 First Steps', 'Complete your first lesson');
-            }
-            
-            if (completedCount >= 5 && !learningData.achievements.includes('knowledge_seeker')) {
-                learningData.achievements.push('knowledge_seeker');
-                showAchievement('📚 Knowledge Seeker', 'Complete 5 lessons');
-            }
-            
-            if (learningData.currentStreak >= 7 && !learningData.achievements.includes('week_warrior')) {
-                learningData.achievements.push('week_warrior');
-                showAchievement('🔥 Week Warrior', '7-day learning streak');
-            }
-        }
-
-        // Show achievement notification
-        function showAchievement(title, description) {
-            const notification = document.createElement('div');
-            notification.className = 'fixed top-20 right-4 bg-yellow-500 text-white px-6 py-4 rounded-lg shadow-lg z-50 transform transition-all duration-500 max-w-sm';
-            notification.innerHTML = `
-                <div class="font-bold text-lg mb-1">🏆 Achievement Unlocked!</div>
-                <div class="font-semibold">${title}</div>
-                <div class="text-sm opacity-90">${description}</div>
+            const percentage = Math.round((correct / lesson.quiz.length) * 100);
+            quizResult.innerHTML = `
+                <div class="p-4 rounded-lg ${percentage >= 70 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                    <strong>Quiz Result:</strong> ${correct}/${lesson.quiz.length} correct (${percentage}%)
+                    ${percentage >= 70 ? '🎉 Great job!' : '📚 Review the lesson and try again!'}
+                </div>
             `;
-            document.body.appendChild(notification);
+            quizResult.classList.remove('hidden');
+        }
+
+        // Load exercise
+        function loadExercise(exerciseData) {
+            document.getElementById('exercise-description').innerHTML = `
+                <p class="text-gray-700">${exerciseData.description}</p>
+            `;
+            document.getElementById('hint-text').textContent = exerciseData.hint;
+        }
+
+        // Run code simulation
+        function runCode() {
+            const code = document.getElementById('code-editor').value;
+            const output = document.getElementById('code-output');
             
-            setTimeout(() => {
-                notification.style.transform = 'translateY(-20px)';
-                notification.style.opacity = '0';
-                setTimeout(() => notification.remove(), 500);
-            }, 4000);
-        }
-
-        // Modal functions
-        function showStats() {
-            document.getElementById('statsModal').classList.remove('hidden');
-            document.getElementById('statsModal').classList.add('flex');
-        }
-
-        function closeStats() {
-            document.getElementById('statsModal').classList.add('hidden');
-            document.getElementById('statsModal').classList.remove('flex');
-        }
-
-        function showStreakDetails() {
-            document.getElementById('streakModal').classList.remove('hidden');
-            document.getElementById('streakModal').classList.add('flex');
-        }
-
-        function closeStreakDetails() {
-            document.getElementById('streakModal').classList.add('hidden');
-            document.getElementById('streakModal').classList.remove('flex');
-        }
-
-        function showSettings() {
-            document.getElementById('settingsModal').classList.remove('hidden');
-            document.getElementById('settingsModal').classList.add('flex');
-        }
-
-        function closeSettings() {
-            document.getElementById('settingsModal').classList.add('hidden');
-            document.getElementById('settingsModal').classList.remove('flex');
-        }
-
-        // Daily challenge
-        function startDailyChallenge() {
-            alert('🎯 Daily Challenge started! This feature will open a coding environment where you can practice list comprehensions.');
-        }
-
-        // Reset progress
-        function resetProgress() {
-            if (confirm('Are you sure you want to reset all your progress? This cannot be undone.')) {
-                learningData.completedLessons.clear();
-                learningData.totalXP = 0;
-                learningData.currentStreak = 0;
-                learningData.achievements = [];
-                updateStats();
-                populateSidebar();
-                saveProgress();
-                alert('Progress reset successfully!');
-                closeSettings();
+            if (!code.trim()) {
+                output.textContent = 'Please write some code first!';
+                return;
+            }
+            
+            // Simple code execution simulation
+            try {
+                // Simulate print statements
+                const printMatches = code.match(/print\((.*?)\)/g);
+                if (printMatches) {
+                    const results = printMatches.map(match => {
+                        const content = match.match(/print\((.*?)\)/)[1];
+                        // Remove quotes and evaluate simple expressions
+                        return content.replace(/['"]/g, '').replace(/f["'](.+?)["']/g, '$1');
+                    });
+                    output.textContent = results.join('\n');
+                } else {
+                    output.textContent = 'Code executed successfully!\n(No output to display)';
+                }
+            } catch (error) {
+                output.textContent = `Error: ${error.message}`;
             }
         }
 
-        // Save/Load progress
-        function saveProgress() {
-            const data = {
-                ...learningData,
-                completedLessons: Array.from(learningData.completedLessons)
-            };
-            localStorage.setItem('pythonJourneyProgress', JSON.stringify(data));
-        }
-
-        function loadSavedProgress() {
-            const saved = localStorage.getItem('pythonJourneyProgress');
-            if (saved) {
-                const data = JSON.parse(saved);
-                Object.assign(learningData, data);
-                learningData.completedLessons = new Set(data.completedLessons || []);
+        // Check exercise solution
+        function checkExercise() {
+            const code = document.getElementById('code-editor').value;
+            const lesson = lessons[currentLesson];
+            const result = document.getElementById('exercise-result');
+            
+            if (!code.trim()) {
+                result.innerHTML = `
+                    <div class="p-4 bg-red-100 text-red-800 rounded-lg">
+                        Please write some code first!
+                    </div>
+                `;
+                result.classList.remove('hidden');
+                return;
+            }
+            
+            const isCorrect = lesson.exercise.check(code);
+            
+            result.innerHTML = `
+                <div class="p-4 rounded-lg ${isCorrect ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}">
+                    ${isCorrect ? 
+                        '🎉 <strong>Excellent!</strong> Your solution works correctly!' : 
+                        '🤔 <strong>Good try!</strong> Your solution needs some adjustments. Check the hint or try again!'
+                    }
+                </div>
+            `;
+            result.classList.remove('hidden');
+            
+            if (isCorrect) {
+                markLessonComplete();
             }
         }
 
-        // Close modals when clicking outside
-        document.addEventListener('click', function(e) {
-            if (e.target.classList.contains('fixed') && e.target.classList.contains('inset-0')) {
-                closeStats();
-                closeStreakDetails();
-                closeSettings();
-            }
-        });
+        // Show hint
+        function showHint() {
+            const hintBox = document.getElementById('hint-box');
+            hintBox.classList.toggle('hidden');
+        }
 
-        // Initialize app when page loads
+        // Mark lesson as complete
+        function markLessonComplete() {
+            completedLessons.add(lessons[currentLesson].id);
+            renderNavigation();
+            updateProgress();
+        }
+
+        // Update progress bar
+        function updateProgress() {
+            const progress = completedLessons.size;
+            const percentage = (progress / lessons.length) * 100;
+            
+            document.getElementById('overall-progress').textContent = progress;
+            document.getElementById('progress-bar').style.width = `${percentage}%`;
+        }
+
+        // Navigation functions
+        function previousLesson() {
+            if (currentLesson > 0) {
+                currentLesson--;
+                loadLesson(currentLesson);
+                renderNavigation();
+            }
+        }
+
+        function nextLesson() {
+            if (currentLesson < lessons.length - 1) {
+                currentLesson++;
+                loadLesson(currentLesson);
+                renderNavigation();
+            } else {
+                // Course completed
+                alert('🎉 Congratulations! You have completed the Python Journey! Keep practicing and building amazing projects!');
+            }
+        }
+
+        // Initialize the app when page loads
         document.addEventListener('DOMContentLoaded', initializeApp);
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'978e218bd5b930d5',t:'MTc1NjgyNzg5MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'978e5bdb820edbab',t:'MTc1NjgzMDI3OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
